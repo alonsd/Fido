@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.fido.R
@@ -25,6 +26,13 @@ class ArticleDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         initData()
+        initListeners()
+    }
+
+    private fun initListeners() {
+        binding.fragmentArticleDetailsArrowBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     private fun initData() {

@@ -12,13 +12,22 @@
         android:padding="16dp">
 
         <ImageView
+            android:id="@+id/fragment_article_details_arrow_back"
+            android:importantForAccessibility="no"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/arrow_back_black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
             android:id="@+id/article_details_image"
             android:layout_width="250dp"
             android:layout_height="200dp"
             android:importantForAccessibility="no"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fragment_article_details_arrow_back"
             tools:src="@mipmap/ic_launcher" />
 
         <TextView

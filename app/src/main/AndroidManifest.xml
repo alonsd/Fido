@@ -7,9 +7,9 @@
     <application
         android:name="com.fido.utils.application.App"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/fido"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/fido"
         android:supportsRtl="false"
         android:theme="@style/Theme.BasicApplication">
         <activity
