@@ -34,13 +34,19 @@ class DashboardViewModel(private val repository: Repository) : ViewModel() {
                 is UiEvent.ListItemClicked -> {
                     updateUiAction(UiAction.NavigateToArticleDetails(event.model))
                 }
-                UiEvent.UiResumedFromBackground -> {
-
-                }
                 UiEvent.UserReturnedToScreen -> {
-
+                    addLoadingItemToTopOfTheList()
+                    getTeslaNews()
                 }
             }
+        }
+    }
+
+    private fun addLoadingItemToTopOfTheList() {
+        _uiState.update {
+            val items = it.dashboardListItems.toMutableList()
+            items.add(0, DashboardListItemLoadingModel())
+            it.copy(dashboardListItems = items)
         }
     }
 
@@ -91,13 +97,12 @@ class DashboardViewModel(private val repository: Repository) : ViewModel() {
         }
     }
 
-    public fun submitEvent(event: UiEvent) = viewModelScope.launch {
+    fun submitEvent(event: UiEvent) = viewModelScope.launch {
         _uiEvent.emit(event)
     }
 
     sealed interface UiEvent {
         data class ListItemClicked(val model: DashboardListItemModel) : UiEvent
-        object UiResumedFromBackground : UiEvent
         object UserReturnedToScreen : UiEvent
     }
 

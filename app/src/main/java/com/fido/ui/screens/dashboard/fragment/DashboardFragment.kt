@@ -33,8 +33,8 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        observeUiState()
         initAdapter()
+        observeUiState()
         observeUiActions()
     }
 
@@ -54,6 +54,7 @@ class DashboardFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        dashboardViewModel.submitEvent(DashboardViewModel.UiEvent.UserReturnedToScreen)
     }
 
     private fun initAdapter() {
