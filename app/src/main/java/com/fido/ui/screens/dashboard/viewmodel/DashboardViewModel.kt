@@ -1,9 +1,12 @@
-package com.fido.data.viewmodel
+package com.fido.ui.screens.dashboard.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.fido.data.repository.Repository
 import com.fido.model.server_models.TeslaNewsResponseModel
+import com.fido.model.ui_models.BaseDashboardListItemModel
+import com.fido.model.ui_models.DashboardListItemLoadingModel
+import com.fido.model.ui_models.DashboardListItemModel
 import com.haroldadmin.cnradapter.NetworkResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +19,6 @@ class DashboardViewModel(private val repository: Repository) : ViewModel() {
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
-
     init {
         getTeslaNews()
     }
@@ -25,7 +27,7 @@ class DashboardViewModel(private val repository: Repository) : ViewModel() {
     private fun getTeslaNews() = viewModelScope.launch(Dispatchers.IO) {
         when (val response = repository.getDataFromApi()) {
             is NetworkResponse.Success -> {
-                _uiState.update { it.copy(teslaNews = response.body, state = UiState.State.Data) }
+                parseDashboardListItemsAndUpdateUi(response.body)
             }
 
             is NetworkResponse.Error -> {
@@ -36,8 +38,17 @@ class DashboardViewModel(private val repository: Repository) : ViewModel() {
         }
     }
 
+    private fun parseDashboardListItemsAndUpdateUi(model: TeslaNewsResponseModel) {
+        val dashboardListItems = mutableListOf<DashboardListItemModel>()
+        model.articles.forEach { article ->
+            dashboardListItems.add(DashboardListItemModel(article.urlToImage ?: "", article.title))
+        }
+        _uiState.update {
+            it.copy(dashboardListItems = dashboardListItems, state = UiState.State.Data) }
+    }
+
     data class UiState(
-        val teslaNews: TeslaNewsResponseModel = TeslaNewsResponseModel(emptyList(), "", 0),
+        val dashboardListItems: List<BaseDashboardListItemModel> = listOf(DashboardListItemLoadingModel()),
         val errorMessage: String = "",
         val state: State = State.Initial
     ) {
@@ -46,5 +57,11 @@ class DashboardViewModel(private val repository: Repository) : ViewModel() {
             Data,
             Error
         }
+    }
+
+    sealed interface UiEvents {
+        object ListItemClicked : UiEvents
+        object UiResumedFromBackground : UiEvents
+        object UserReturnedToScreen : UiEvents
     }
 }

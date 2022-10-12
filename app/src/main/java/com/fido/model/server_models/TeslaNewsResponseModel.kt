@@ -27,7 +27,7 @@ data class TeslaNewsResponseModel(
         @SerializedName("url")
         val url: String,
         @SerializedName("urlToImage")
-        val urlToImage: String
+        val urlToImage: String?
     ) {
         data class Source(
             @SerializedName("id")

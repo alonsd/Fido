@@ -1,6 +1,6 @@
 package com.fido.service_locator
 
-import com.fido.data.viewmodel.DashboardViewModel
+import com.fido.ui.screens.dashboard.viewmodel.DashboardViewModel
 import org.koin.android.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
