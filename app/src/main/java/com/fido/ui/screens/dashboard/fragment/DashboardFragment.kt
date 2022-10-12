@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.fido.databinding.FragmentDashboardBinding
 import com.fido.model.ui_models.BaseDashboardListItemModel
 import com.fido.ui.screens.dashboard.viewmodel.DashboardViewModel
@@ -34,15 +35,31 @@ class DashboardFragment : Fragment() {
 
         observeUiState()
         initAdapter()
+        observeUiActions()
+    }
+
+    private fun observeUiActions() = launchAndRepeatWithViewLifecycle {
+        dashboardViewModel.uiActions.collect { action ->
+            when(action) {
+                is DashboardViewModel.UiAction.NavigateToArticleDetails -> {
+                    navigateToArticleDetails(action.model)
+                }
+            }
+        }
+    }
+
+    private fun navigateToArticleDetails(model: DashboardListItemModel) {
+        findNavController().navigate(DashboardFragmentDirections.actionDashboardFragmentToArticleDetailsFragment(model))
     }
 
     override fun onResume() {
         super.onResume()
-
     }
 
     private fun initAdapter() {
-        adapter = TeslaNewsArticleAdapter()
+        adapter = TeslaNewsArticleAdapter { model ->
+            dashboardViewModel.submitEvent(DashboardViewModel.UiEvent.ListItemClicked(model))
+        }
     }
 
     private fun observeUiState() = launchAndRepeatWithViewLifecycle {

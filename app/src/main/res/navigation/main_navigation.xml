@@ -9,5 +9,22 @@
         android:id="@+id/dashboardFragment"
         android:name="com.fido.ui.screens.dashboard.fragment.DashboardFragment"
         android:label="fragment_main"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_dashboard">
+        <action
+            android:id="@+id/action_dashboardFragment_to_articleDetailsFragment"
+            app:destination="@id/articleDetailsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/articleDetailsFragment"
+        android:name="com.fido.ui.screens.article_details.fragment.ArticleDetailsFragment"
+        android:label="ArticleDetailsFragment"
+        tools:layout="@layout/fragment_article_details" >
+        <argument
+            android:name="model"
+            app:argType="com.fido.model.ui_models.DashboardListItemModel" />
+    </fragment>
 </navigation>

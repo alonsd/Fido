@@ -9,9 +9,7 @@ import com.fido.model.ui_models.DashboardListItemLoadingModel
 import com.fido.model.ui_models.DashboardListItemModel
 import com.haroldadmin.cnradapter.NetworkResponse
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class DashboardViewModel(private val repository: Repository) : ViewModel() {
@@ -19,8 +17,35 @@ class DashboardViewModel(private val repository: Repository) : ViewModel() {
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
+    private val _uiEvent = MutableSharedFlow<UiEvent>()
+    private val uiEvents = _uiEvent.asSharedFlow()
+
+    private val _uiAction = MutableSharedFlow<UiAction>()
+    val uiActions = _uiAction.asSharedFlow()
+
     init {
         getTeslaNews()
+        observerUiEvents()
+    }
+
+    private fun observerUiEvents() = viewModelScope.launch {
+        uiEvents.collect { event ->
+            when (event) {
+                is UiEvent.ListItemClicked -> {
+                    updateUiAction(UiAction.NavigateToArticleDetails(event.model))
+                }
+                UiEvent.UiResumedFromBackground -> {
+
+                }
+                UiEvent.UserReturnedToScreen -> {
+
+                }
+            }
+        }
+    }
+
+    private fun updateUiAction(action: UiAction) = viewModelScope.launch {
+        _uiAction.emit(action)
     }
 
 
@@ -41,10 +66,17 @@ class DashboardViewModel(private val repository: Repository) : ViewModel() {
     private fun parseDashboardListItemsAndUpdateUi(model: TeslaNewsResponseModel) {
         val dashboardListItems = mutableListOf<DashboardListItemModel>()
         model.articles.forEach { article ->
-            dashboardListItems.add(DashboardListItemModel(article.urlToImage ?: "", article.title))
+            dashboardListItems.add(
+                DashboardListItemModel(
+                    article.urlToImage,
+                    article.title,
+                    article.description
+                )
+            )
         }
         _uiState.update {
-            it.copy(dashboardListItems = dashboardListItems, state = UiState.State.Data) }
+            it.copy(dashboardListItems = dashboardListItems, state = UiState.State.Data)
+        }
     }
 
     data class UiState(
@@ -59,9 +91,17 @@ class DashboardViewModel(private val repository: Repository) : ViewModel() {
         }
     }
 
-    sealed interface UiEvents {
-        object ListItemClicked : UiEvents
-        object UiResumedFromBackground : UiEvents
-        object UserReturnedToScreen : UiEvents
+    public fun submitEvent(event: UiEvent) = viewModelScope.launch {
+        _uiEvent.emit(event)
+    }
+
+    sealed interface UiEvent {
+        data class ListItemClicked(val model: DashboardListItemModel) : UiEvent
+        object UiResumedFromBackground : UiEvent
+        object UserReturnedToScreen : UiEvent
+    }
+
+    sealed interface UiAction {
+        data class NavigateToArticleDetails(val model: DashboardListItemModel) : UiAction
     }
 }

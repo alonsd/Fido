@@ -10,7 +10,9 @@ import com.fido.model.ui_models.BaseDashboardListItemModel
 import com.fido.model.ui_models.DashboardListItemModel
 import com.fido.utils.adapter.DefaultAdapterDiffUtilCallback
 
-class TeslaNewsArticleAdapter : ListAdapter<BaseDashboardListItemModel,
+class TeslaNewsArticleAdapter(
+    private val onclick: (model: DashboardListItemModel) -> Unit
+) : ListAdapter<BaseDashboardListItemModel,
         RecyclerView.ViewHolder>(DefaultAdapterDiffUtilCallback<BaseDashboardListItemModel>()) {
 
     private val teslaNewsItemType = 0
@@ -19,7 +21,7 @@ class TeslaNewsArticleAdapter : ListAdapter<BaseDashboardListItemModel,
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         if (viewType == teslaNewsItemType) {
             val binding = ViewholderTeslaNewsArticleBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return TeslaNewsArticleViewHolder(binding)
+            return TeslaNewsArticleViewHolder(binding, onclick)
         }
         val binding = ViewholderTeslaNewsArticleLoadingBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return TeslaNewsLoadingViewHolder(binding)
@@ -31,6 +33,7 @@ class TeslaNewsArticleAdapter : ListAdapter<BaseDashboardListItemModel,
             return holder.bind(currentItem)
         }
     }
+
 
     override fun getItemViewType(position: Int): Int {
         val currentItem = getItem(position)

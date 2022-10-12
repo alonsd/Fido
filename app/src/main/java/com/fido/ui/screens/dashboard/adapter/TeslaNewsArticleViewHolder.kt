@@ -6,9 +6,12 @@ import com.fido.R
 import com.fido.databinding.ViewholderTeslaNewsArticleBinding
 import com.fido.model.ui_models.DashboardListItemModel
 
-class TeslaNewsArticleViewHolder(private val binding : ViewholderTeslaNewsArticleBinding) : RecyclerView.ViewHolder(binding.root) {
+class TeslaNewsArticleViewHolder(
+    private val binding: ViewholderTeslaNewsArticleBinding,
+    private val onclick: (model : DashboardListItemModel) -> Unit
+) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(model : DashboardListItemModel){
+    fun bind(model: DashboardListItemModel) {
         if (model.articleImage == null) {
             binding.viewholderTeslaNewsArticleImage.setImageResource(R.mipmap.ic_launcher)
         } else {
@@ -18,5 +21,8 @@ class TeslaNewsArticleViewHolder(private val binding : ViewholderTeslaNewsArticl
                 .into(binding.viewholderTeslaNewsArticleImage)
         }
         binding.viewholderTeslaNewsArticleTitle.text = model.articleTitle
+        binding.root.setOnClickListener {
+            onclick(model)
+        }
     }
 }
