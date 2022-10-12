@@ -8,17 +8,8 @@ import org.koin.core.context.startKoin
 
 class App : Application() {
 
-    companion object {
-        private var instance: App? = null
-
-        fun applicationContext() : Context {
-            return instance!!.applicationContext
-        }
-    }
-
     override fun onCreate() {
         super.onCreate()
-        instance = this
         setupKoin()
     }
 
